@@ -1,5 +1,17 @@
 # Let's code some brainrot chat
 
+logs = ['00:00:00 - Program initialized']
+
+import time
+
+startTime = time.time()
+# Simple function to check time for logging purposes
+def getTime():
+    timePassed = time.gmtime(time.time() - startTime)
+    return time.strftime("%H:%M:%S -", timePassed)
+
+logs.append(f'{getTime()} modules initialized')
+
 # ALL THE BRAINROTS
 hawkTuah = {
     'name': 'hawk tuah',
@@ -7,7 +19,7 @@ hawkTuah = {
     'description': 'replaces "hawk" with your given word',
     'example': 'walk -> walk tuah',
     'multiword': True,
-    'blackwords': ['huzz', 'rizzler', 'ussy']
+    'blackwords': ['huzz', 'rizzler']
 }
 
 huzz = {
@@ -32,13 +44,6 @@ tsPmo = {
     'description': 'WIP',
     'example': 'WIP',
     'multiword': True
-}
-
-ussy = {
-    'name': 'ussy',
-    'description': 'appends "ussy" to your given word',
-    'example': 'automaton -> automatussy',
-    'multiword': True,
 }
 
 skibidi = {
@@ -69,16 +74,22 @@ slur = {
     'multiword': False,
 }
 
-allBrainrots = [hawkTuah, huzz, rizzler, ussy, skibidi, rotiender, slur]
-
+allBrainrots = [hawkTuah, huzz, rizzler, skibidi, rotiender, slur]
 singleWords = list(brainrot['name'] for brainrot in allBrainrots if brainrot['multiword'] == False)
+logs.append(f'{getTime()} dictonaries and lists loaded')
 
 # Gets the input word
 def getInput():
+    logs.append(f'{getTime()} getInput entered')
+    autoRot = False
+    ran = False
     validInput = False
     while not validInput:
         # Input
-        userInput = input('Enter the word you would like to brainrotify, or turn on AUTOROT by typing "auto": ')
+        if ran == False:
+            print('Enter the word you would like to brainrotify, or turn on AUTOROT by typing "auto":')
+            ran = True
+        userInput = input()
 
         # Checker
         if userInput == '':
@@ -99,20 +110,27 @@ def getInput():
             print('Note: AUTOROT is not supported for all brainrot phrases.')
         elif userInput == 'manual':
             autoRot = False
-            print('AUTOROT deactivated.')
+            print('AUTOROT deactivated. Please type your brainrot word.')
         else:
             validInput = True
     return userInput, autoRot
 
 # Checks the user input to compile a list of available brainrots
-# def validateBrainrots():
+def validateBrainrots(word):
+    # The list, originally with all brainrots and then they will be removed accordingly
+    rotList = allBrainrots
+    # Elimination if statement
+    if ' ' in word:
+        rotList.remove(brainrot for brainrot in allBrainrots if brainrot['multiword'] == False)
+        logs.append('validateBrainrots: single-word methods removed')
+    return rotList
 
 # Gets the user to choose which brainrot to use
-def selectBrainrot(userInput):
+def selectBrainrot(brainrots):
     validInput = False
     print('Here are all the options for brainrotifying your word:')
-    for brainrot in availBrainrots:
-        print(brainrot)
+    for brainrot in brainrots:
+        print(f'{brainrot['name']} ({brainrot['id']})')
     print('To learn more about a specific brainrot, type "help <option name>"')
     print('If the brainrot method you wanted did not show up, type "why" to see the reasoning or type "back" to try a different word.')
     while not validInput:
@@ -128,7 +146,7 @@ def selectBrainrot(userInput):
         elif 'help' in userInput:
             newInput = userInput.replace('help ', '')
             print(allBrainrots[0]['name'])
-        elif userInput in allBrainrots and userInput not in availBrainrots:
+        elif userInput in allBrainrots and userInput not in brainrots:
             print('This brainrot is not compatible with your word. Please try a different method or enter a new word.')
         elif userInput not in allBrainrots:
             print('You did not select a brainrot. Please try again.')
@@ -136,7 +154,7 @@ def selectBrainrot(userInput):
             validInput = True
     return userInput
 
-
+logs.append(f'{getTime()} functions loaded')
 
 # Main code
 rotMethod = 'back'
@@ -146,4 +164,4 @@ print(singleWords)
 
 while rotMethod == 'back':
     wordToRot, autoRot = getInput()
-    rotMethod = selectBrainrot(wordToRot)
+    rotMethod = selectBrainrot(validateBrainrots(wordToRot))
