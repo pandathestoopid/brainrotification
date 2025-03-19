@@ -160,7 +160,6 @@ logs.append(f'{getTime()} functions loaded')
 rotMethod = 'back'
 
 print('Welcome to Brainrotifier.')
-print(singleWords)
 
 while rotMethod == 'back':
     wordToRot, autoRot = getInput()
